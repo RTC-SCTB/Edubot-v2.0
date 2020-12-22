@@ -5,11 +5,6 @@
 """
 Документация на библиотеку ImageDraw https://pillow.readthedocs.io/en/stable/reference/ImageDraw.html
 """
-
-
-
-
-
 import RPi.GPIO as GPIO
 from PIL import Image       # библиотеки для рисования на дисплее
 from PIL import ImageDraw
