@@ -5,11 +5,15 @@ from edubot import EduBot, MotorMode, Direction, Registers
 
 """ Перед запуском поставить робота на ровную поверхность, тк он начнет движение вперед! """
 
-if __name__ == "__main__":
+# Функция срабатывающая по нажатию кнопки на роботе
+def button():
+    print("Кнопка нажата")
 
+if __name__ == "__main__":
     # инициализация робота и его моторов
     bus = smbus.SMBus(1)
     bot = EduBot(bus)
+    bot.onButton = button
     bot.start()
     print(bot.whoIam())
     bot.setMotorMode(MotorMode.MOTOR_MODE_PID)
