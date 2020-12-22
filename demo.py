@@ -3,7 +3,11 @@ import smbus
 import time
 from edubot import EduBot, MotorMode, Direction, Registers
 
+""" Перед запуском поставить робота на ровную поверхность, тк он начнет движение вперед! """
+
 if __name__ == "__main__":
+
+    # инициализация робота и его моторов
     bus = smbus.SMBus(1)
     bot = EduBot(bus)
     bot.start()
@@ -29,7 +33,6 @@ if __name__ == "__main__":
     bot.setParrot0(0)
     bot.setParrot1(0)
     time.sleep(1)
-
 
     # Движение камеры
     for i in range(0, 200, 8):
