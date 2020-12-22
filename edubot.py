@@ -41,7 +41,7 @@ class Registers:
     REG_PWM_1 = 0x0F  # ШИМ задаваемый мотору B в режиме WORK_MODE_PWM_I2C
     REG_RESET_ALL_MOTOR = 0x10  # сброс всех внутренних параметров
     REG_BEEP = 0x11
-    REG_BUTTON = 0x12
+    REG_BUTTON = 0x12 # регистр кнопки
 
 
 class MotorMode:
@@ -63,10 +63,14 @@ class EduBot:
         self._bus = bus  # шина i2c
         self._addr = addr  # адресс устройства
         self.__exit = False  # метка выхода из потоков
+        self.onButton = None
 
     def whoIam(self):
         """ Должен вернуть 42 """
         return self._bus.read_byte_data(self._addr, Registers.REG_WHY_IAM)
+
+    def check(self):
+        return
 
     def setMotorMode(self, mode):
         """ Устанавливает режим работы драйвера """
@@ -142,8 +146,18 @@ class EduBot:
             self._bus.write_byte_data(self._addr, Registers.REG_ONLINE, 1)
             time.sleep(1)
 
+    def __buttonThread(self):
+        """ поток проверяющий нажатие кнопки """
+        while not self.__exit:
+            if self._bus.read_byte_data(self._addr, Registers.REG_BUTTON):
+                if not (self.onButton is None):
+                    print("button")
+                    self.onButton()
+            time.sleep(0.5)
+
     def start(self):
         threading.Thread(target=self.__onlineThread, daemon=True).start()  # включаем посылку онлайн меток
+        threading.Thread(target=self.__buttonThread, daemon=True).start()  # включаем проверку нажатия кнопки
 
     def exit(self):
         self.__exit = True
@@ -154,8 +168,7 @@ if __name__ == "__main__":
     bot = EduBot(bus)
     bot.start()
     print(bot.whoIam())
-
-    bot.setMotorMode(MotorMode.MOTOR_MODE_PID)
-    bot.setParrot0(0x05)
     time.sleep(5)
     bot.exit()
+
+
